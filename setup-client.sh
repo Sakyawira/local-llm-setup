@@ -51,6 +51,7 @@ fi
 # --- 3. Copy conf to wireguard directory ---
 echo ""
 echo "[2/4] Setting up config..."
+umask 077
 mkdir -p "$WG_DIR"
 DEST="$WG_DIR/client.conf"
 cp "$CONF_FILE" "$DEST"

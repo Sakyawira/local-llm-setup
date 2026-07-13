@@ -52,6 +52,7 @@ fi
 # --- 2. Create wireguard directory ---
 echo ""
 echo "[2/6] Setting up $WG_DIR..."
+umask 077
 mkdir -p "$WG_DIR"
 cd "$WG_DIR"
 
@@ -63,7 +64,8 @@ echo "[3/6] Generating keys..."
 if [ -f server_private.key ]; then
     echo "  ⚠ Server keys already exist, skipping (delete them to regenerate)"
 else
-    wg genkey | tee server_private.key | wg pubkey > server_public.key
+    wg genkey > server_private.key
+    wg pubkey < server_private.key > server_public.key
     chmod 600 server_private.key
     echo "  ✓ Server keypair generated"
 fi
@@ -76,7 +78,8 @@ for client in "${CLIENTS[@]}"; do
     if [ -f "${client}_private.key" ]; then
         echo "  ⚠ ${client} keys already exist, skipping"
     else
-        wg genkey | tee "${client}_private.key" | wg pubkey > "${client}_public.key"
+        wg genkey > "${client}_private.key"
+        wg pubkey < "${client}_private.key" > "${client}_public.key"
         chmod 600 "${client}_private.key"
         echo "  ✓ ${client} keypair generated"
     fi
